@@ -1,0 +1,68 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home - Ethereum Address Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Recent Transactions</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Hash</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Value (ETH)</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_transactions %}
+                    <tr>
+                        <td>{{ tx.hash|truncatechars:12 }}</td>
+                        <td>
+                            <a href="{% url 'address_detail' tx.from_address.address %}">
+                                {{ tx.from_address.label|default:tx.from_address.address|truncatechars:12 }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'address_detail' tx.to_address.address %}">
+                                {{ tx.to_address.label|default:tx.to_address.address|truncatechars:12 }}
+                            </a>
+                        </td>
+                        <td>{{ tx.value }}</td>
+                        <td>{{ tx.timestamp|timesince }} ago</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No transactions found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h2>Top Addresses</h2>
+        <div class="list-group">
+            {% for address in top_addresses %}
+            <a href="{% url 'address_detail' address.address %}" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ address.label|default:address.address|truncatechars:20 }}</h5>
+                    <small>{{ address.balance }} ETH</small>
+                </div>
+                <p class="mb-1">{{ address.tx_count }} transactions</p>
+            </a>
+            {% empty %}
+            <div class="list-group-item">No addresses tracked yet</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
